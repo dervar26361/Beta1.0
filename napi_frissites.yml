@@ -1,0 +1,41 @@
+name: Napi arfrissites
+
+on:
+  schedule:
+    - cron: "17 3 * * *"      # minden nap ~04:17 / 05:17 magyar idő szerint (UTC 03:17)
+  workflow_dispatch:           # kézi indítás: Actions fül -> Run workflow
+
+permissions:
+  contents: write
+
+jobs:
+  gyujtes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Csomagok
+        run: pip install requests beautifulsoup4 openpyxl
+
+      - name: Mappa
+        run: mkdir -p adatok
+
+      - name: Gyűjtés
+        run: python horgasz_scraper.py --shops shops.json --output adatok/nyers.csv
+        continue-on-error: true      # egy bolt hibája ne állítsa le a mentést
+
+      - name: Átalakítás (készletszűrés, tiszta adatok)
+        run: python atalakito.py adatok/nyers.csv adatok
+
+      - name: Mentés a tárolóba
+        run: |
+          git config user.name "horgaszar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add adatok
+          git diff --cached --quiet || git commit -m "Napi arfrissites $(date -u +%F)"
+          git push

@@ -1,0 +1,144 @@
+{
+  "_leiras": "Boltonkénti beállítások. Kulcs: domain www nélkül. start_urls: kategóriaoldalak, ahonnan a termékeket gyűjti. product_url_pattern: regex, amire a termékoldal-linkek illeszkednek (ha üres, a szkript maga próbálja felismerni). pagination: 'auto' | 'comma' (UNAS: ...,2) | 'query_page' (?page=2). variant_table: a termékoldalon táblázatban vannak a változatok (hossz/dobósúly/ár). selectors: opcionális CSS-szelektorok, ha az automatikus felismerés nem működik. A KÍSÉRLETI jelzésű boltoknál az első futás után érdemes ellenőrizni a jelentést; ha kevés a termék, szólj, és beállítjuk a szelektorokat.",
+  "tacklebait.hu": {
+    "name": "TackleBait",
+    "engine": "UNAS",
+    "category": "Feeder bot",
+    "start_urls": [
+      "https://tacklebait.hu/Botok/Feeder-botok-picker-botok"
+    ],
+    "pagination": "comma",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 20,
+    "selectors": {}
+  },
+  "pecaplaza.hu": {
+    "name": "PecaPlaza",
+    "engine": "CWB",
+    "category": "Feeder bot + orsó",
+    "start_urls": [
+      "https://pecaplaza.hu/termekek/Botok_10.html",
+      "https://pecaplaza.hu/termekek/Orsok_20.html"
+    ],
+    "pagination": "auto",
+    "product_url_pattern": "/termek/",
+    "name_must_contain": "feeder|orsok-",
+    "variant_table": true,
+    "max_pages": 30,
+    "selectors": {}
+  },
+  "fishingoutlet.hu": {
+    "name": "Fishing Outlet",
+    "engine": "Shoprenter",
+    "category": "Feeder bot + távdobó orsó",
+    "start_urls": [
+      "https://www.fishingoutlet.hu/ujdonsagok-132/feeder-155",
+      "https://www.fishingoutlet.hu/ferfi-137/tavdobo-188",
+      "https://www.fishingoutlet.hu/ferfi-137/elsofekes-590"
+    ],
+    "pagination": "query_page",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 30,
+    "selectors": {}
+  },
+  "fishingland.hu": {
+    "name": "Fishingland",
+    "engine": "?",
+    "category": "Feeder bot + távdobó orsó",
+    "start_urls": [
+      "https://www.fishingland.hu/Feeder-horgaszbot",
+      "https://www.fishingland.hu/Tavdobo-orso"
+    ],
+    "pagination": "query_page",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 30,
+    "selectors": {},
+    "kiserleti": true,
+    "page_param": "infinite_page"
+  },
+  "pesca.hu": {
+    "name": "Pesca Horgászbolt",
+    "engine": "?",
+    "category": "Távdobó orsó",
+    "start_urls": [
+      "https://www.pesca.hu/orso/tavdobo-orso"
+    ],
+    "pagination": "comma",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 30,
+    "selectors": {},
+    "kiserleti": true
+  },
+  "megapeca.hu": {
+    "name": "Megapeca",
+    "engine": "?",
+    "category": "Távdobó orsó",
+    "start_urls": [
+      "https://megapeca.hu/orsok/tavdobo-orso/"
+    ],
+    "pagination": "query_page",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 30,
+    "selectors": {},
+    "kiserleti": true
+  },
+  "centrumzoo.hu": {
+    "name": "Centrum Zoo",
+    "engine": "UNAS",
+    "category": "Orsó",
+    "start_urls": [
+      "https://centrumzoo.hu/spl/187571/Shimano",
+      "https://centrumzoo.hu/spl/442170/Daiwa",
+      "https://centrumzoo.hu/spl/140812/GURU",
+      "https://centrumzoo.hu/spl/973997/Penn",
+      "https://centrumzoo.hu/spl/292809/KORUM",
+      "https://centrumzoo.hu/spl/373771/Okuma",
+      "https://centrumzoo.hu/spl/951540/Delphin",
+      "https://centrumzoo.hu/spl/166014/Spro",
+      "https://centrumzoo.hu/spl/699127/Cormoran",
+      "https://centrumzoo.hu/spl/123384/Browning",
+      "https://centrumzoo.hu/spl/894248/Nevis",
+      "https://centrumzoo.hu/spl/329886/13Fishing",
+      "https://centrumzoo.hu/spl/452646/Fox",
+      "https://centrumzoo.hu/spl/546071/D-A-M",
+      "https://centrumzoo.hu/spl/690441/Savage-Gear",
+      "https://centrumzoo.hu/spl/963972/Ryobi",
+      "https://centrumzoo.hu/spl/649667/Sonik",
+      "https://centrumzoo.hu/spl/878329/TICA",
+      "https://centrumzoo.hu/spl/470171/Balzer",
+      "https://centrumzoo.hu/spl/464331/Abu-Garcia",
+      "https://centrumzoo.hu/spl/330254/Banax",
+      "https://centrumzoo.hu/spl/865577/Prologic",
+      "https://centrumzoo.hu/spl/195004/MITCHELL",
+      "https://centrumzoo.hu/spl/285506/Sakura",
+      "https://centrumzoo.hu/spl/556109/BLACK-CAT",
+      "https://centrumzoo.hu/spl/902123/AVID-Carp",
+      "https://centrumzoo.hu/spl/331035/RADICAL-CARP",
+      "https://centrumzoo.hu/spl/905349/ET-Benzar-Carp-Expert-orsok",
+      "https://centrumzoo.hu/spl/701852/Lineaeffe",
+      "https://centrumzoo.hu/spl/206141/Mad-Cat",
+      "https://centrumzoo.hu/spl/934368/Reiva",
+      "https://centrumzoo.hu/spl/398938/Fin-Nor",
+      "https://centrumzoo.hu/spl/991985/NOMURA",
+      "https://centrumzoo.hu/spl/565339/PREDATOR",
+      "https://centrumzoo.hu/spl/562598/Prowess",
+      "https://centrumzoo.hu/spl/266343/Preston",
+      "https://centrumzoo.hu/spl/757145/ZEBCO",
+      "https://centrumzoo.hu/spl/163209/Tubertini",
+      "https://centrumzoo.hu/spl/890067/Silstar-Eurostar",
+      "https://centrumzoo.hu/spl/780229/X-SERT",
+      "https://centrumzoo.hu/spl/494369/egyeb"
+    ],
+    "pagination": "unas_spl",
+    "product_url_pattern": "",
+    "variant_table": false,
+    "max_pages": 20,
+    "selectors": {},
+    "kiserleti": true
+  }
+}
