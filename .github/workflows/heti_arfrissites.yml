@@ -1,0 +1,41 @@
+name: Heti arfrissites
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"      # hetente egyszer, hetfo ~04:17 / 05:17 magyar ido szerint
+  workflow_dispatch:           # kezi inditas: Actions ful -> Run workflow
+
+permissions:
+  contents: write
+
+jobs:
+  gyujtes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Csomagok
+        run: pip install requests beautifulsoup4 openpyxl
+
+      - name: Mappa
+        run: mkdir -p adatok
+
+      - name: Gyujtes
+        run: python horgasz_scraper.py --shops shops.json --output adatok/nyers.csv
+        continue-on-error: true
+
+      - name: Atalakitas
+        run: python atalakito.py adatok/nyers.csv adatok
+
+      - name: Mentes a tarolóba
+        run: |
+          git config user.name "horgaszar-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add adatok
+          git diff --cached --quiet || git commit -m "Heti arfrissites $(date -u +%F)"
+          git push
