@@ -140,7 +140,7 @@ function sCard(t,b,k,ms,low){const s=SE[k];return`<a class="card" href="#bot-${t
 function bandOf(t,use){return Object.entries(SE).filter(([k])=>tp(k)===t&&(!use||useOf(k)===use)).flatMap(([k,s])=>s.m.filter(m=>ok(s,m)).map(minP))}
 /*NAV-END*/
 function render(){const p=location.hash.slice(1).split("-").filter(Boolean),M=$("main"),q=lc($("q").value.trim());{const nb=p[0]==="zsinor"?BNDZ:BND0;if(nb!==BND){BND=nb;F.min=0;F.max=0}}
-$("nav").innerHTML=["bot","orso","zsinor","bottarto","kapasjelzo","etetoolom","kiegeszitok","kemping","meritohalo","halvedelem"].map(k=>{const T_=TREE[k];return `<a href="#${k}" class="${p[0]===k?"on":""}">${ic(T_?T_.ic:k)}<span>${T_?T_.n:k==="bot"?"Bot":k==="orso"?"Orsó":CATS[k].nav}</span></a>`}).join("");
+$("nav").innerHTML=["bot","orso","zsinor","bottarto","kapasjelzo","etetoolom","horog","csali","mucsali","meritohalo","halvedelem","aprosag","kemping"].map(k=>{const T_=TREE[k];return `<a href="#${k}" class="${p[0]===k?"on":""}">${ic(T_?T_.ic:k)}<span>${T_?T_.n:k==="bot"?"Bot":k==="orso"?"Orsó":CATS[k].nav}</span></a>`}).join("");
 const labs={bot:"Bot",orso:"Orsó",kereses:"Keresés",...T,...B};Object.entries(SE).forEach(([k,s])=>labs[k]=s.n);
 CT=p[0]==="bot"&&T[p[1]]?p[1]:null;document.body.classList.toggle("home",!p.length&&!q);if(F.mode!==p[0]+CT){F.len.clear();F.cat.clear();F.mode=p[0]+CT}
 if(p[0]!=="bot"||p.length<3||(p.length>=4&&!String(p[3]).startsWith("fam_")))F.use=null;if(p[0]==="bot"&&String(p[2]||"").startsWith("u_"))F.use=p[2]==="u_all"?null:p[2].slice(2);
@@ -338,10 +338,13 @@ etetoolom:{n:"Etetőkosár és ólom",ic:"etetokosar",m:"Etetőkosár (method, f
  olom:{n:"Ólom",k:{
   bojlisolom:{n:"Bojlis ólom",k:{inline:{n:"Inline"},pasztas:{n:"Pasztás"},kapcsos:{n:"Kapcsos"}}},
   harcsasolom:{n:"Harcsás ólom"},finomolom:{n:"Finom szerelékes ólom"},pergetoolom:{n:"Pergető"}}}}},
-kiegeszitok:{n:"Kiegészítők",ic:"aprosag",m:"Apróságok és egyéb kiegészítők",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
-kemping:{n:"Kemping",ic:"kemping",m:"Sátor, szék, ágy és egyebek",k:{sator:{n:"Sátor"},szek:{n:"Szék"},agy:{n:"Ágy"},egyebek:{n:"Egyebek"}}},
+horog:{n:"Horog",ic:"horog",m:"Feeder, pontyozó, pergető, harcsázó, egyéb",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
+csali:{n:"Csali",ic:"csali",m:"Feeder, pontyozó, pergető, harcsázó, egyéb",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
+mucsali:{n:"Műcsali",ic:"mucsali",m:"Feeder, pontyozó, pergető, harcsázó, egyéb",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
 meritohalo:{n:"Merítőháló",ic:"meritohalo",m:"Merítők, nyelek, fejek (hamarosan)"},
-halvedelem:{n:"Halvédelem",ic:"halvedelem",m:"Haltartók, pontyágy, sebkezelés (hamarosan)"}
+halvedelem:{n:"Halvédelem",ic:"halvedelem",m:"Haltartók, pontyágy, sebkezelés (hamarosan)"},
+aprosag:{n:"Apróságok",ic:"aprosag",m:"Feeder, pontyozó, pergető, harcsázó, egyéb",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
+kemping:{n:"Kemping",ic:"kemping",m:"Sátor, szék, ágy és egyebek",k:{sator:{n:"Sátor"},szek:{n:"Szék"},agy:{n:"Ágy"},egyebek:{n:"Egyebek"}}}
 };
 ICON.etetokosar="<path d='M14 22 H50 L45 52 H19 Z'/><path d='M20 22 a12 10 0 0 1 24 0'/><path d='M24 32 H40 M25 42 H39'/>";
 ICON.olom="<path d='M32 8 V16'/><circle cx='32' cy='12' r='3'/><path d='M22 52 L26 22 H38 L42 52 Z'/><path d='M20 52 H44'/>";
