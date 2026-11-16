@@ -184,7 +184,7 @@ function pfUI(slot){const S=pfState(slot),chip=(k,v,l,n,on)=>`<button type="butt
 let h="";const al=pfAllowed(slot);if(al)h+='<div class="sec">Módszer: '+tname(sLoad().method)+'</div><div class="chips">'+chip("all","0","Csak a módszerhez illők",null,!PF.all)+chip("all","1","Minden termék",null,!!PF.all)+'</div>'+(slot==="kapasjelzo"&&sLoad().method==="feeder"&&!PF.all?'<p class="m">Feedernél csak a kifejezetten feeder technikához készült elektromos kapásjelzők látszanak.</p>':'');const ck=Object.keys(S.cats).sort((a,b)=>S.cats[b]-S.cats[a]);
 if(ck.length>1)h+='<div class="sec">Típus / felhasználás</div><div class="chips">'+chip("cat","","Mind",null,!PF.cat)+ck.map(c=>chip("cat",c,PFCL(c),S.cats[c],PF.cat===c)).join("")+'</div>';
 h+='<div class="sec">Ársáv</div><div class="chips">'+chip("pr","","Mind",null,PF.pr==="")+PFB.map((b,i)=>S.pc[i]?chip("pr",String(i),b[2],S.pc[i],PF.pr===String(i)):'<span class="chip" style="opacity:.4" aria-disabled="true">'+b[2]+' (0)</span>').join("")+'</div>';
-const bk=Object.keys(S.brs).sort((a,b)=>a.localeCompare(b,"hu"));
+const bk=Object.keys(S.brs).sort((a,b)=>(S.brs[b]-S.brs[a])||a.localeCompare(b,"hu"));
 if(bk.length>1||PF.br)h+='<div class="sec">Márka</div><div class="chips">'+chip("br","","Mind",null,!PF.br)+bk.map(b=>chip("br",b,b,S.brs[b],PF.br===b)).join("")+'</div>';
 return h}
 function pickRows(slot,qs){const S=pfState(slot),toks=lc(qs||"").split(/\s+/).filter(Boolean);const all=S.a3.filter(x=>{const hay=lc(x.n+" "+x.info+" "+x.br);return toks.every(t=>hay.includes(t))});
