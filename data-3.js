@@ -388,7 +388,7 @@ function bandNote(){const i=bandIdx();return i>=0?'<div class="chips" style="mar
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-band]");if(!t)return;e.preventDefault();const i=+t.dataset.band;if(i<0){F.min=0;F.max=0}else{F.min=BND[i][0]||0;F.max=BND[i][1]===1e12?0:BND[i][1]}render()});
 /*BAND-END*/
 
-function filters(rr){let q="";const mm=/^#orso-([a-z]+)/.exec(location.hash);if(rr&&mm&&RT[mm[1]]){q='<div class="fg"><b>Fék típusa</b><div class="chips">'+["Elsőfékes","Nyeletőfékes"].map(c=>`<span class="chip ${F.cat.has(c)?"on":""}" data-s="cat" data-v="${c}">${c}</span>`).join("")+(mm[1]==="pontyozo"?`<span class="chip ${F.td?"on":""}" data-td="1">Távdobó</span>`:"")+"</div></div>"}return bandNote()+q+filtersOld(rr)}
+function filters(rr){let q="";const mm=/^#orso-([a-z]+)/.exec(location.hash);if(rr&&mm&&RT[mm[1]]){q='<div class="fg"><b>Fék típusa</b><div class="chips">'+["Elsőfékes","Nyeletőfékes"].map(c=>`<span class="chip ${F.cat.has(c)?"on":""}" data-s="cat" data-v="${c}">${c}</span>`).join("")+((mm[1]==="pontyozo"||mm[1]==="feeder")?`<span class="chip ${F.td?"on":""}" data-td="1">Távdobó</span>`:"")+"</div></div>"}return bandNote()+q+filtersOld(rr)}
 document.addEventListener("click",e=>{const t=e.target.closest&&e.target.closest("[data-td]");if(!t)return;e.preventDefault();F.td=!F.td;render()});
 const SIMW=cp=>cp<=10000?[0,.5]:cp<=30000?[.3,.3]:[.2,.2];
 const simIn=(p,cp)=>{const[d,u]=SIMW(cp);return p<cp?(d>0&&p>=cp*(1-d)&&p<=cp*.95):(p>cp&&p<=cp*(1+u)&&p>=cp*1.05)};

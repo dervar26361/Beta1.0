@@ -375,6 +375,145 @@ P.forEach(([c,x,y])=>{const d=D[c];if(!d||!d[x]||!d[y]){log.miss++;return}
  delete d[s];log.merged++});
 window.__PAIRM=log;
 })();
+/*BOTFIX*/(function(){
+const nk=s=>String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"");
+const tok=s=>String(s).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").split(/[^a-z0-9]+/).filter(Boolean);
+const log={nevis:0,h:0,alias:0,url:0,dedup:0,plan:[]};
+const D=SE,isH=k=>/(^|_)h_/.test(k);
+const lw=m=>m[2]+"|"+nk(m[3]);
+const cnt=s=>s.m.reduce((a,m)=>a+m[5].length,0);
+function mergeInto(t,s,why){const T=D[t],S=D[s];
+ S.m.forEach(m=>{const mm=T.m.find(z=>z[0]===m[0]||lw(z)===lw(m)||nk(z[1])===nk(m[1]));
+  if(mm){m[5].forEach(o=>{const e=mm[5].find(z=>z[0]===o[0]);if(!e)mm[5].push(o);else if(o[1]<e[1]){e[1]=o[1];e[2]=o[2]}})}
+  else T.m.push(m)});
+ if(!T.d&&S.d)T.d=S.d;
+ delete D[s];log.plan.push(why+": "+s+" -> "+t)}
+// 1) márka nélküli bot-sorozatok = Nevis (TackleBait nevében nincs márka)
+Object.keys(D).forEach(k=>{const s=D[k];if(!s.br&&!/^alk_/.test(k)&&B.nevis){s.br="nevis";log.nevis++}});
+// 2) Haldorádó (h_) családok: ha márka+sorozat egy meglévő családdal egyezik és van azonos hossz+súly, beolvasztjuk
+Object.keys(D).filter(isH).forEach(k=>{const e=D[k];if(!e)return;const full=nk((B[e.br]||e.br)+" "+e.n);const A=new Set(e.m.map(lw));let best=null;
+ for(const t in D){if(t===k||isH(t))continue;const s=D[t];const a=nk(s.n);
+  if(a!==full&&!(a.startsWith(full)&&full.length>5)&&!(full.startsWith(a)&&a.length>8))continue;
+  let ov=0;s.m.forEach(m=>{if(A.has(lw(m)))ov++});
+  if(ov&&(!best||ov>best[1]||(ov===best[1]&&cnt(s)>cnt(D[best[0]]))))best=[t,ov]}
+ if(best){mergeInto(best[0],k,"h");log.h++}});
+// 3) névváltozatok: azonos márka, azonos név (carp/feeder szó nélkül) + azonos hossz+súly; vagy azonos bolti URL azonos modellnél
+const skey=s=>tok(s).filter(x=>x!=="carp"&&x!=="feeder").join(" ");
+let changed=true,guard=0;
+while(changed&&guard++<6){changed=false;
+ const byB={};Object.keys(D).forEach(k=>{const s=D[k];if(!s.br||isH(k))return;(byB[s.br]=byB[s.br]||[]).push(k)});
+ for(const b in byB){const ks=byB[b];
+  for(let i=0;i<ks.length;i++){for(let j=i+1;j<ks.length;j++){const x=ks[i],y=ks[j];if(!D[x]||!D[y])continue;const X=D[x],Y=D[y];
+   const sx=skey(X.n),sy=skey(Y.n);
+   const ax=new Set(X.m.map(lw));const ov=Y.m.some(m=>ax.has(lw(m)));
+   let why=null;
+   if(sx&&sx===sy&&ov&&(X.t||"")===(Y.t||"")||(sx&&sx===sy&&ov&&!X.t&&!Y.t))why="alias";
+   if(!why&&ov){const cx={},cy={};X.m.forEach(m=>m[5].forEach(o=>cx[o[2]]=(cx[o[2]]||0)+1));Y.m.forEach(m=>m[5].forEach(o=>cy[o[2]]=(cy[o[2]]||0)+1));
+    if(Y.m.some(m=>ax.has(lw(m))&&m[5].some(o=>o[2]&&cx[o[2]]===1&&cy[o[2]]===1)))why="url"}
+   if(why){const t=cnt(Y)>cnt(X)?y:x,s=t===x?y:x;mergeInto(t,s,why);log[why]++;changed=true}}}}}
+// 3b) családon belüli modell-duplikátum: bolt-generált azonosítójú modell (…_cz/_pe/_wf…) + főazonosítós modell azonos hossz+súllyal
+const gen=id=>/_(?:cz|pe|wf|hz|fl|fo|hc|sg|sn|tb|xf|fi|fz|ha)$/.test(id);
+Object.keys(D).forEach(k=>{const s=D[k];let again=true;while(again){again=false;
+ outer:for(let i=0;i<s.m.length;i++)for(let j=0;j<s.m.length;j++){if(i===j)continue;const a=s.m[i],b=s.m[j];
+  if(gen(a[0])||!gen(b[0])||lw(a)!==lw(b)||/nincsadat$/.test(lw(a)))continue;
+  const bad=b[5].some(o=>{const e=a[5].find(z=>z[0]===o[0]);return e&&e[1]!==o[1]});if(bad)continue;
+  b[5].forEach(o=>{if(!a[5].find(z=>z[0]===o[0]))a[5].push(o)});s.m.splice(j,1);log.model=(log.model||0)+1;again=true;break outer}}});
+// 4) azonos bolt egy modellnél: csak a legolcsóbb marad
+Object.values(D).forEach(s=>s.m.forEach(m=>{const seen={};m[5]=m[5].filter(o=>{const e=seen[o[0]];if(!e){seen[o[0]]=o;return true}if(o[1]<e[1]){e[1]=o[1];e[2]=o[2]}log.dedup++;return false})}));
+window.__BOTFIX=log;
+})();
+/*RSFIX*/(function(){
+const D=RS;const log={moved:0,split:0,del:0,merged:0,brand:0,dedup:0,ch:[]};
+const nrm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const nk=s=>nrm(s).replace(/[^a-z0-9]+/g,"");
+const cnt=s=>s.m.reduce((a,m)=>a+m[5].length,0);
+// --- méret normalizálás (Okuma/Nevis "40" = 4000); 100-999 és >20000 = nem megbízható
+const es=m=>{const z=+m[2];if(z>=1000&&z<=14999)return Math.floor(z/100)*100;if(z>=10&&z<=99)return z*100;return null};
+// --- kulcsszavak ---
+const R={
+ part:/f[eé]kcsillag|safety guard|al[aá]fut[aá]s|\bspool\s*$/i,
+ fly:/m[uű]legyez|legyez[oő]|\bfly\b/i,
+ sea:/s[oó]sv[ií]z|saltiga|sealine|\bsalt\b|ishidai|tengeri|jigging|overhead|elektromos|leobritz|\bpe special\b|saltwater/i,
+ multi:/\bTW\d*\b|curado|metanium|\bMGL\b|tranx|revo\b|ambassadeur|casting|baitcast|\bmulti\b|\bLP\b|casting reel|zillion|steez|tatula|ryoga|alphas|morethan|\bpool\b/i,
+ spod:/\bspod\b|spomb|\bmarker\b/i,
+ cat:/catfish|\bwels\b|harcs|black cat|mamut|\bsumo\b|\bcat\b/i,
+ feeder:/feeder|picker|\bmethod\b(?!\s*runner)/i,
+ match:/\bmatch\b|bolo\b|bolog|waggler|spicc/i,
+ spin:/\bspin\b|spinning|perget|predator|zander|\bjig\b|trout|pstrag|ultra\s?light|\bul\b|finesse|wobbler|\bbass\b|\bLT\b|prorex|presso|iprimi|silvercreek|sandart|s[uü]ll[oő]|csuka|\bshad\b/i,
+ br:/baitrunner|bait\s?runner|\bBR\b|emcast/i,
+ carp:/carp|ponty|bojli|boilie|baitrunner|bait\s?runner|\bBR\b|runner|\bsurf\b|crosscast|\bscw\b|long\s?cast|longcast|distance|extreme|big pit|t[aá]vdob|\bcast\b|\bfd\b/i};
+const CARPB=new Set(["Sonik","Fox","Korum","Nash","Prologic","Avid","Trakker","Wychwood","Ridgemonkey","Carp Expert","Carp Zoom","Fox Matrix","Preston","Delphin"]);
+const kwType=(s)=>{const t=s.b+" "+s.n+" "+s.m.map(m=>m[1]).join(" ");
+ if(R.fly.test(t))return"Általános";
+ if(R.sea.test(t)&&!R.spod.test(t))return"Általános";
+ if(R.spod.test(t))return"Spod";
+ if(R.cat.test(t))return"Harcsázó";
+ if(R.feeder.test(t))return"Feeder";
+ if(R.match.test(t))return"Match";
+ if(R.multi.test(t)&&!R.carp.test(t))return"Pergető";
+ if(R.spin.test(t)&&!R.carp.test(t))return"Pergető";
+ if(R.carp.test(t))return"Távdobó";
+ if(CARPB.has(s.b)&&["Sonik","Fox","Korum","Nash","Prologic","Avid","Trakker","Wychwood","Ridgemonkey","Carp Expert","Carp Zoom"].includes(s.b))return"Távdobó";
+ return null};
+// --- méretszabályok típusonként: [min,max] ---
+const LIM={"Távdobó":[5000,1e9],"Pontyozó":[3500,1e9],"Harcsázó":[5000,1e9],"Spod":[5000,1e9],"Feeder":[2500,8000],"Match":[0,5000],"Pergető":[0,6500]};
+const fits=(t,e)=>{if(e===null||!LIM[t])return true;return e>=LIM[t][0]&&e<=LIM[t][1]};
+function dest(s,m,e,from){const t=s.b+" "+s.n+" "+m[1];
+ if(from==="Feeder"&&e>8000)return e<=14000?"Távdobó":"Általános";
+ if(from==="Match"&&e>5000)return"Feeder";
+ if(R.fly.test(t)||R.sea.test(t))return"Általános";
+ if(R.br.test(t)&&e>=3500)return"Pontyozó";
+ if(R.feeder.test(t)&&e>=2500)return"Feeder";
+ if(R.match.test(t))return"Match";
+ if(R.spin.test(t)&&e<=6500)return"Pergető";
+ if(R.cat.test(t)&&e>=5000)return"Harcsázó";
+ if(from==="Pergető"&&e>6500)return R.carp.test(t)?"Távdobó":"Általános";
+ if(R.carp.test(t)&&e>=3500&&e<5000)return"Pontyozó";
+ return"Általános"}
+// --- márkajavítás (új boltok sorai: a cím első szava került márkának) ---
+const JUNK={"Dam":"D.A.M.","Pz":"Predator-Z","Top":"Top Mix","The":"The One","X":"X Sert","Xr":"XR"};
+const JUNKB=new Set(["Serie","Unix","No","Method","Green","Feedercast","Feeder","Zeal","Focus","Fanatic","Azurite","Predator","aláfutás-gátló","Et","Ea"]);
+Object.keys(D).forEach(k=>{if(!k.startsWith("rn_"))return;const s=D[k];
+ if(JUNK[s.b]){const nb=JUNK[s.b];let n=s.n;if(s.b==="Top")n=n.replace(/^Mix\s+/i,"");if(s.b==="The")n=n.replace(/^One\s+/i,"");if(s.b==="X")n=n.replace(/^Sert\s+/i,"");s.n=(s.b==="The"||s.b==="X"?"":"")+n;s.b=nb;log.brand++}
+ else if(JUNKB.has(s.b)){s.n=(s.b+" "+s.n).replace(/\s+orsó,?\s*$/i,"").replace(/\s+/g," ").trim();s.b="Márka nélkül";log.brand++}});
+// --- 1) alkatrészek törlése ---
+Object.keys(D).forEach(k=>{const s=D[k];if(R.part.test(s.b+" "+s.n)&&!/\b(with|inc|inclusive|incl|free)\b|orsó|reel/i.test(s.n)){log.ch.push([k,s.b,s.n,s.u,"TÖRÖLVE","alkatrész/nem orsó"]);delete D[k];log.del++}});
+// --- 2) típus-meghatározás + méretszabályok (családszint + modellszintű szétválasztás) ---
+const newKeys={};
+function addTo(b,n,u,d,m,src){const key=nk(b)+"__"+nk(n)+"__"+nk(u);let k=Object.keys(D).find(x=>D[x].b===b&&D[x].n===n&&D[x].u===u);
+ if(!k){k="rf_"+key;if(!D[k])D[k]={b,n,u,d:d||"",m:[]};}
+ const T=D[k];const mm=T.m.find(z=>z[0]===m[0]);
+ if(mm){m[5].forEach(o=>{const e=mm[5].find(z=>z[0]===o[0]);if(!e)mm[5].push(o);else if(o[1]<e[1]){e[1]=o[1];e[2]=o[2]}})}else T.m.push(m);return k}
+Object.keys(D).forEach(k=>{if(!D[k])return;const s=D[k];const auto=k.startsWith("rn_");const kt=kwType(s);const orig=s.u;let base=orig;
+ if(auto){base=kt||null;if(!base){const ees=s.m.map(es).filter(x=>x!==null);const mx=ees.length?Math.max(...ees):null;base=mx!==null&&mx>=5000?"Távdobó":"Általános"}}
+ else if((orig==="Távdobó"||orig==="Általános")&&kt&&kt!==orig&&kt!=="Távdobó")base=kt;
+ // modellenként
+ const keep=[],mv=[];s.m.forEach(m=>{const e=es(m);if(fits(base,e))keep.push(m);else mv.push([m,dest(s,m,e,base)])});
+ if(base!==orig&&!mv.length){log.ch.push([k,s.b,s.n,orig,base,auto?"új bolti sor: típus a névből":"név alapján"]);s.u=base;log.moved++}
+ else if(base!==orig){s.u=base}
+ if(mv.length){
+  if(!keep.length){ // az egész család átkerül: modellenként csoportosítva céltípus szerint
+   const g={};mv.forEach(([m,d])=>(g[d]=g[d]||[]).push(m));const ds=Object.keys(g);
+   if(ds.length===1){s.u=ds[0];log.ch.push([k,s.b,s.n,orig,ds[0],"méret nem megfelelő a(z) "+base+" típushoz"]);log.moved++}
+   else{delete D[k];ds.forEach(d=>{g[d].forEach(m=>addTo(s.b,s.n,d,s.d,m));log.ch.push([k,s.b,s.n,orig,d,"méret szerint szétosztva ("+g[d].length+" modell)"])});log.split++}
+  }else{s.m=keep;if(s.u!==base)s.u=base;mv.forEach(([m,d])=>{addTo(s.b,s.n,d,s.d,m)});log.ch.push([k,s.b,s.n,base,"több","kis/nagy méretű modellek átrakva ("+mv.length+" db)"]);log.split++}
+ }});
+// --- 3) azonos család összevonása (márka + törzsnév + típus) ---
+const core=(b,n)=>{let t=nrm(n).replace(/új!|ujj!|!/g," ").replace(/\b(daiwa|shimano|okuma|penn|abu garcia|ryobi|zebco|mitchell)\b/g," ");
+ let tk=t.split(/[^a-z0-9.]+/).filter(Boolean);
+ while(tk.length&&/^\d{2}$/.test(tk[0]))tk.shift();
+ const out=[];for(const x of tk){if(/^(csalad|premium|ajandek|prémium)$/.test(x)||/^\d+bb$/.test(x)||/^j?b\d+$/.test(x)||/^(\d{3,}|\d+\.\d+|\d+mm)$/.test(x)||x==="+")break;out.push(x);if(x==="lt")break}
+ const seen=new Set(),r=[];out.forEach(x=>{if(!seen.has(x)){seen.add(x);r.push(x)}});return r.join(" ")};
+const grp={};Object.keys(D).forEach(k=>{const s=D[k];const c=core(s.b,s.n);if(c.length<4)return;const g=nk(s.b)+"|"+c+"|"+s.u;(grp[g]=grp[g]||[]).push(k)});
+Object.values(grp).forEach(ks=>{if(ks.length<2)return;ks.sort((a,b)=>cnt(D[b])-cnt(D[a]));const t=ks[0],T=D[t];
+ ks.slice(1).forEach(x=>{const S=D[x];S.m.forEach(m=>{const mm=T.m.find(z=>z[0]===m[0]);
+  if(mm){m[5].forEach(o=>{const e=mm[5].find(z=>z[0]===o[0]);if(!e)mm[5].push(o);else if(o[1]<e[1]){e[1]=o[1];e[2]=o[2]}})}else T.m.push(m)});
+  if(!T.d&&S.d)T.d=S.d;log.ch.push([x,S.b,S.n,S.u,"összevonva",T.b+" "+T.n]);delete D[x];log.merged++})});
+// --- 4) azonos bolt egy modellen belül: a legolcsóbb marad; üres családok törlése ---
+Object.keys(D).forEach(k=>{const s=D[k];s.m.forEach(m=>{const seen={};m[5]=m[5].filter(o=>{const e=seen[o[0]];if(!e){seen[o[0]]=o;return true}if(o[1]<e[1]){e[1]=o[1];e[2]=o[2]}log.dedup++;return false})});
+ s.m=s.m.filter(m=>m[5].length);if(!s.m.length)delete D[k]});
+window.__RSFIX=log;
+})();
 /*SANE*/(function(){
 const R={"_leiras": "Közös szabályfájl: az oldal építése (sane_patch.py) és a gyűjtő scriptek is ezt használják. Árak Ft-ban.", "ar": {"bot": {"alap": [3000, 1300000], "spicc": [1200, 250000], "rakos": [10000, 1300000], "teleszkopos": [1500, 120000], "alkatresz": [500, 60000]}, "orso": [2500, 650000], "zsinor": [300, 50000], "kapasjelzo": {"elektromos": [4000, 500000], "swinger": [700, 120000], "hagyomanyos": [100, 15000], "szett": [3000, 500000]}, "bottarto": [200, 300000]}, "kizar_nev": {"orso": "dobpánt|pótdob|dobbetét|csapágy|tekerőkar|fogantyú|orsótok|orsótáska", "bot": "leszúró|bank ?stick|botvilla|bottartó", "kapasjelzo": "varta|\\belem\\b|akkumul|\\bjig\\b|jig ?fej|vizigolyó|shad|szúnyog|\\bpva\\b|hardcase|spacer|leather washer|\\bbomb\\b|adapter|bracket|\\bkar\\b|rögzítő|fej\\b|jelző ?led|led ?stick|csomagtartó", "zsinor": "krimp|hüvely|szerelék kész|horog"}, "atsorol": {"rakos_hossz_felett_m": 9.5, "bot_nev_pergeto": "baitcast|battle ?whip|pro ?staff ?spin", "bt_pod_ar_felett": 20000, "kj_elektromos_ar_alatt": 4000}, "zsinor_junk_sorozat": ["Zsinór"]};const log={dropped:{},reclass:{},ex:[],min:{},max:{}};
 const cnt=(k,n=1)=>log.dropped[k]=(log.dropped[k]||0)+n;
@@ -407,5 +546,36 @@ clean(BT,"bottarto",s=>"",(s,m)=>s.b+" "+s.n+" "+m[1],null);
 const sc=(name,D,tf)=>Object.values(D).forEach(s=>s.m.forEach(m=>m[5].forEach(o=>{const key=name+(tf?":"+tf(s):"");const a=log.min[key],b=log.max[key];if(!a||o[1]<a[0])log.min[key]=[o[1],(s.b||"")+" "+s.n+" "+m[1]];if(!b||o[1]>b[0])log.max[key]=[o[1],(s.b||"")+" "+s.n+" "+m[1]]})));
 sc("bot",SE,s=>s.t||"feeder");sc("orso",RS);sc("zsinor",ZS,s=>s.t);sc("kj",KS,s=>s.t);sc("bt",BT,s=>s.t);
 window.__SANE=log;
+})();
+
+/*RTAG*/(function(){
+const es=m=>{const z=+m[2];if(z>=1000&&z<=14999)return Math.floor(z/100)*100;if(z>=10&&z<=99)return z*100;return null};
+const X={feeder:/feeder|picker|\bmethod\b(?!\s*runner)/i,br:/baitrunner|bait\s?runner|\bBR\b|emcast|elsőfékes|nyeletőfékes|elsofekes|nyeletofekes|ponty|carp|bojli|boilie/i,
+ td:/t[aá]vdob|distance|long\s?cast|longcast|surf|crosscast|\bscw\b|extreme|big pit/i,spod:/\bspod\b|spomb|marker/i,cat:/catfish|\bwels\b|harcs|black cat|mamut|\bsumo\b|\bcat\b/i,
+ match:/\bmatch\b|bolo\b|bolog|waggler|spicc/i,spin:/\bspin\b|spinning|perget|predator|zander|\bjig\b|ultra\s?light|finesse|prorex|presso|csuka|s[uü]ll[oő]/i};
+const txt=(s,m)=>(s.b+" "+s.n+" "+m[1]+" "+(s.d||"")+" "+m[5].map(o=>o[2]).join(" ")).replace(/[-_\/]+/g," ");
+const cache=new Map();
+const tags=(s,m)=>{let c=cache.get(m);if(c)return c;const e=es(m),T=txt(s,m),base=rtype(s,m),t=new Set([base]);
+ const ok=(a,b)=>e===null||(e>=a&&e<=b);
+ if(X.feeder.test(T)&&ok(2500,8000)&&e!==null)t.add("feeder");
+ if(X.spod.test(T)&&e!==null&&e>=5000)t.add("spod");
+ if(X.cat.test(T)&&e!==null&&e>=5000)t.add("harcsazo");
+ if(X.match.test(T)&&ok(0,5000))t.add("match");
+ if(X.spin.test(T)&&ok(0,6500))t.add("pergeto");
+ if(X.br.test(T)&&e!==null&&e>=3500&&base!=="pergeto"&&base!=="match")t.add("pontyozo");
+ // kemény méretkorlátok
+ if(e!==null){if(t.has("pontyozo")&&e<3500)t.delete("pontyozo");if(t.has("feeder")&&(e<2500||e>8000))t.delete("feeder");if(t.has("harcsazo")&&e<5000)t.delete("harcsazo");if(t.has("spod")&&e<5000)t.delete("spod");if(t.has("match")&&e>5000)t.delete("match");if(t.has("pergeto")&&e>6500)t.delete("pergeto")}
+ if(!t.size)t.add(base);
+ // Távdobó: csak >=5000 (ismeretlen méret kimarad)
+ const tdFam=m[7]==="Távdobó"||s.u==="Távdobó"||X.td.test(T);
+ m.__td=!!(tdFam&&e!==null&&e>=5000&&t.has("pontyozo"));
+ // Távdobó feeder: legfeljebb 6500
+ m.__tdf=!!(t.has("feeder")&&e!==null&&e<=6500&&(X.td.test(T)||e>=4500));
+ cache.set(m,t);return t};
+window.__rtags=tags;
+const R2={pontyozo:(s,m)=>tags(s,m).has("pontyozo")&&(!F.td||m.__td),harcsazo:(s,m)=>tags(s,m).has("harcsazo"),spod:(s,m)=>tags(s,m).has("spod"),match:(s,m)=>tags(s,m).has("match"),pergeto:(s,m)=>tags(s,m).has("pergeto"),feeder:(s,m)=>tags(s,m).has("feeder")&&(!F.td||m.__tdf)};
+Object.keys(R2).forEach(k=>{RT[k][1]=(s,m)=>{tags(s,m);return R2[k](s,m)}});
+let multi=0,tot=0;const cn={};Object.values(RS).forEach(s=>s.m.forEach(m=>{const t=tags(s,m);tot++;if(t.size>1)multi++;t.forEach(x=>cn[x]=(cn[x]||0)+1)}));
+window.__RTAG={tot,multi,cn};
 })();
 $("q").oninput=render;addEventListener("hashchange",()=>{$("q").value="";render();scrollTo(0,0)});render();

@@ -216,10 +216,10 @@ a.card[href*="-"]:not(.tc) .m .pill.g{background:var(--gnbg);color:var(--gn)}
 <script>(function(){const K="horgaszar_tema",r=document.documentElement;let m="auto";try{const v=localStorage.getItem(K);if(v==="light"||v==="dark")m=v}catch(e){}
 function ap(){if(m==="auto")r.removeAttribute("data-theme");else r.setAttribute("data-theme",m);document.querySelectorAll("[data-tema]").forEach(b=>{const on=b.dataset.tema===m;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)})}
 ap();document.addEventListener("click",e=>{const b=e.target.closest&&e.target.closest("[data-tema]");if(!b)return;m=b.dataset.tema;try{if(m==="auto")localStorage.removeItem(K);else localStorage.setItem(K,m)}catch(x){}ap()})})();</script>
-<script src="data-1.js?v=92f44084"></script>
+<script src="data-1.js?v=72e85e28"></script>
 <script src="data-2.js?v=d733d592"></script>
-<script src="data-3.js?v=e389eb83"></script>
-<script src="data-4.js?v=d70fd92d"></script>
+<script src="data-3.js?v=0110f35c"></script>
+<script src="data-4.js?v=819d35dc"></script>
 
 <script>if("serviceWorker" in navigator&&(location.protocol==="https:"||location.hostname==="localhost")){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}</script></body>
 </html>
