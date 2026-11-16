@@ -140,7 +140,7 @@ function sCard(t,b,k,ms,low){const s=SE[k];return`<a class="card" href="#bot-${t
 function bandOf(t,use){return Object.entries(SE).filter(([k])=>tp(k)===t&&(!use||useOf(k)===use)).flatMap(([k,s])=>s.m.filter(m=>ok(s,m)).map(minP))}
 /*NAV-END*/
 function render(){const p=location.hash.slice(1).split("-").filter(Boolean),M=$("main"),q=lc($("q").value.trim());{const nb=p[0]==="zsinor"?BNDZ:BND0;if(nb!==BND){BND=nb;F.min=0;F.max=0}}
-$("nav").innerHTML=["bot","orso","kapasjelzo","bottarto","zsinor"].map(k=>`<a href="#${k}" class="${p[0]===k?"on":""}">${ic(k==="bot"?"bot":k==="orso"?"orso":k)}<span>${k==="bot"?"Bot":k==="orso"?"Orsó":CATS[k].nav}</span></a>`).join("");
+$("nav").innerHTML=["bot","orso","zsinor","bottarto","kapasjelzo","etetoolom","kiegeszitok","kemping"].map(k=>{const T_=TREE[k];return `<a href="#${k}" class="${p[0]===k?"on":""}">${ic(T_?T_.ic:k)}<span>${T_?(k==="etetoolom"?"Etető, ólom":T_.n):k==="bot"?"Bot":k==="orso"?"Orsó":CATS[k].nav}</span></a>`}).join("");
 const labs={bot:"Bot",orso:"Orsó",kereses:"Keresés",...T,...B};Object.entries(SE).forEach(([k,s])=>labs[k]=s.n);
 CT=p[0]==="bot"&&T[p[1]]?p[1]:null;document.body.classList.toggle("home",!p.length&&!q);if(F.mode!==p[0]+CT){F.len.clear();F.cat.clear();F.mode=p[0]+CT}
 if(p[0]!=="bot"||p.length<3||(p.length>=4&&!String(p[3]).startsWith("fam_")))F.use=null;if(p[0]==="bot"&&String(p[2]||"").startsWith("u_"))F.use=p[2]==="u_all"?null:p[2].slice(2);
