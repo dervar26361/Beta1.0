@@ -338,7 +338,7 @@ etetoolom:{n:"Etetőkosár és ólom",ic:"etetokosar",m:"Etetőkosár (method, f
  olom:{n:"Ólom",k:{
   bojlisolom:{n:"Bojlis ólom",k:{inline:{n:"Inline"},pasztas:{n:"Pasztás"},kapcsos:{n:"Kapcsos"}}},
   harcsasolom:{n:"Harcsás ólom"},finomolom:{n:"Finom szerelékes ólom"},pergetoolom:{n:"Pergető"}}}}},
-kiegeszitok:{n:"Kiegészítők",ic:"aprosag",m:"Horog, csali, műcsali, apróságok",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
+kiegeszitok:{n:"Kiegészítők",ic:"aprosag",m:"Apróságok és egyéb kiegészítők",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
 kemping:{n:"Kemping",ic:"kemping",m:"Sátor, szék, ágy és egyebek",k:{sator:{n:"Sátor"},szek:{n:"Szék"},agy:{n:"Ágy"},egyebek:{n:"Egyebek"}}},
 meritohalo:{n:"Merítőháló",ic:"meritohalo",m:"Merítők, nyelek, fejek (hamarosan)"},
 halvedelem:{n:"Halvédelem",ic:"halvedelem",m:"Haltartók, pontyágy, sebkezelés (hamarosan)"}
