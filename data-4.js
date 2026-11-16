@@ -156,11 +156,12 @@ else if(!p.length)h=`<section class="hero"><a class="bigbtn" href="#kereses">Vá
 <p class="fine">Az árak a boltok saját oldalairól származnak, hetente frissülnek (a napi frissítés az előfizetői szolgáltatás része lesz). Vásárlás előtt ellenőrizd az árat a bolt oldalán.</p></div>
 </section>`;
 else if(CATS[p[0]])h=CATS[p[0]].route(p);
+else if(TREE[p[0]])h=treePage(p);
 else if(p[0]==="szett")h=szettPage(p);
 else if(p[0]==="dani")h=daniPage(p);
 else if(p[0]==="kivansag")h=wishPage();
 else if(p[0]==="belepes")h=authPage(p);
-else if(p[0]==="kereses")h=bc(p,labs)+'<h1>Mit keresel?</h1><p class="sub">Válassz kategóriát, vagy írd be a típust a fenti keresőbe.</p><div class="grid cats"><a class="card" href="#bot"><div class="ci">'+ic("bot")+'</div><b>Bot</b><div class="m">Feeder, bojlis és pergető botok</div></a><a class="card" href="#orso"><div class="ci">'+ic("orso")+'</div><b>Orsó</b><div class="m">Elsőfékes, nyeletőfékes, feeder, match és további</div></a><a class="card" href="#kapasjelzo"><div class="ci">'+ic("kapasjelzo")+'</div><b>Kapásjelző</b><div class="m">Elektromos kapásjelzők és swingerek</div></a><a class="card" href="#bottarto"><div class="ci">'+ic("bottarto")+'</div><b>Bottartó</b><div class="m">Rod pod, tripod, leszúró, bottartó fej és további</div></a><a class="card" href="#zsinor"><div class="ci">'+ic("zsinor")+'</div><b>Zsinór</b><div class="m">Monofil, nanofil, fonott, fluorocarbon</div></a><div class="card soon" aria-disabled="true"><div class="ci">'+ic("horog")+'</div><b>Horog<span class="tag">Hamarosan</span></b><div class="m">Pontyozó, feeder, csalihorog</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("csali")+'</div><b>Csali<span class="tag">Hamarosan</span></b><div class="m">Bojli, pellet, etetőanyag</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("mucsali")+'</div><b>Műcsali<span class="tag">Hamarosan</span></b><div class="m">Wobbler, gumihal, villantó</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("meritohalo")+'</div><b>Merítőháló<span class="tag">Hamarosan</span></b><div class="m">Merítők, nyelek, fejek</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("halvedelem")+'</div><b>Halvédelem<span class="tag">Hamarosan</span></b><div class="m">Haltartók, pontyágy, sebkezelés</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("aprosag")+'</div><b>Apróság<span class="tag">Hamarosan</span></b><div class="m">Forgók, kapcsok, stopperek</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("satorr")+'</div><b>Sátor<span class="tag">Hamarosan</span></b><div class="m">Bivak, ernyő, sátor</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("kemping")+'</div><b>Kemping<span class="tag">Hamarosan</span></b><div class="m">Székek, ágyak, lámpák</div></div><div class="card soon" aria-disabled="true"><div class="ci">'+ic("akcio")+'</div><b>Akció<span class="tag">Hamarosan</span></b><div class="m">Kiemelt kedvezmények</div></div></div>';
+else if(p[0]==="kereses")h=bc(p,labs)+'<h1>Mit keresel?</h1><p class="sub">Válassz kategóriát, vagy írd be a típust a fenti keresőbe.</p>'+catGrid()+'';
 else if(p[0]==="orso"){const lab={orso:"Orsó"};Object.entries(RT).forEach(([k,v])=>lab[k]=v[0]);Object.entries(RS).forEach(([k,v])=>{lab[k]=v.n;lab[rbk(v)]=v.b||"Nevis"});const t=p[1];
 if(p.length===1)h=bc(p,lab)+'<h1>Orsók</h1><p class="sub">'+(new Set(Object.values(RS).map(s=>s.b||"Nevis")).size)+' márka, '+Object.keys(RS).length+' sorozat. Ahol a bolt nem közli a fék típusát, méretet vagy áttételt, ott „nincs adat” áll. Válassz felhasználási típust, azon belül szűrhetsz elsőfékes / nyeletőfékes orsóra:</p><div class="grid">'+Object.entries(RT).map(([k,v])=>{const n=rsel(k).length;return`<a class="card ${n?"":"soon"}" href="#orso-${k}"><b>${v[0]}</b><div class="m">${n?n+" sorozat":"nincs adat"}</div></a>`}).join("")+"</div>"+'<div class="sec">Szűrés az összes orsón</div>'+filters(1)+(fact()?'<p class="sub">'+reelHits().length+' találat, ár szerint növekvő sorrendben</p>'+reelHits().map(([k,m])=>reelRow(k,m)).join(""):"");
 else if(!RT[t])h="<p>Nincs ilyen kategória.</p>";
@@ -330,4 +331,24 @@ Object.entries(SE).forEach(([k,s])=>{const t=s.t||"feeder";if(t==="alkatresz")re
  if(nt!==t){mv[t+">"+nt]=(mv[t+">"+nt]||0)+1;if(nt==="feeder")delete s.t;else s.t=nt}});
 window.__BCAT=mv;
 })();
+/*MAINCAT*/
+const TREE={
+etetoolom:{n:"Etetőkosár és ólom",ic:"etetokosar",m:"Etetőkosár (method, feeder, hagyományos) és ólmok",k:{
+ etetokosar:{n:"Etetőkosár",k:{method:{n:"Method"},feeder:{n:"Feeder"},hagyomanyos:{n:"Hagyományos"}}},
+ olom:{n:"Ólom",k:{
+  bojlisolom:{n:"Bojlis ólom",k:{inline:{n:"Inline"},pasztas:{n:"Pasztás"},kapcsos:{n:"Kapcsos"}}},
+  harcsasolom:{n:"Harcsás ólom"},finomolom:{n:"Finom szerelékes ólom"},pergetoolom:{n:"Pergető"}}}}},
+kiegeszitok:{n:"Kiegészítők",ic:"aprosag",m:"Horog, csali, műcsali, merítőháló, halvédelem, apróságok",k:{feeder:{n:"Feeder"},pontyozo:{n:"Pontyozó"},pergeto:{n:"Pergető"},harcsazo:{n:"Harcsázó"},egyeb:{n:"Egyéb"}}},
+kemping:{n:"Kemping",ic:"kemping",m:"Sátor, szék, ágy és egyebek",k:{sator:{n:"Sátor"},szek:{n:"Szék"},agy:{n:"Ágy"},egyebek:{n:"Egyebek"}}}
+};
+ICON.etetokosar="<path d='M14 22 H50 L45 52 H19 Z'/><path d='M20 22 a12 10 0 0 1 24 0'/><path d='M24 32 H40 M25 42 H39'/>";
+ICON.olom="<path d='M32 8 V16'/><circle cx='32' cy='12' r='3'/><path d='M22 52 L26 22 H38 L42 52 Z'/><path d='M20 52 H44'/>";
+function treeCards(node,base,ico){return '<div class="grid">'+Object.entries(node.k).map(([k,v])=>`<a class="card" href="#${base}-${k}">${ico?`<div class="ci">${ic(v.ic||ico)}</div>`:""}<b>${v.n}</b><div class="m">${v.k?Object.values(v.k).map(x=>x.n).join(", "):"Hamarosan"}</div></a>`).join("")+'</div>'}
+function treePage(p){let node=TREE[p[0]];if(!node)return"";const crumbs=[["Kezdőlap","#"],["Keresés","#kereses"],[node.n,"#"+p[0]]];let base=p[0];
+ for(let i=1;i<p.length;i++){if(!node.k||!node.k[p[i]])return'<h1>Nem található</h1><p class="sub"><a href="#kereses">Vissza a kategóriákhoz</a></p>';node=node.k[p[i]];base+="-"+p[i];crumbs.push([node.n,"#"+base])}
+ const bc='<div class="bc">'+crumbs.map((c,i)=>i<crumbs.length-1?`<a href="${c[1]}">${c[0]}</a>`:c[0]).join(" › ")+'</div>';
+ if(node.k)return bc+`<h1>${node.n}</h1><p class="sub">Válassz alkategóriát.</p>`+treeCards(node,base,p.length===1?node.ic:0);
+ return bc+`<h1>${node.n}</h1><p class="sub">Ez a kategória hamarosan elérhető: a termékek gyűjtése és besorolása folyamatban van.</p>`}
+function catGrid(){const A=[["bot","Bot","Feeder, bojlis, pergető, spicc, match, harcsázó és további botok"],["orso","Orsó","Pontyozó, harcsázó, spod, match, pergető, feeder"],["zsinor","Zsinór","Monofil, nanofil, fonott, fluorocarbon, leadcore, kónuszos"],["bottarto","Bottartó","Rod pod, tripod, leszúró, bottartó fej és további"],["kapasjelzo","Kapásjelző","Elektromos kapásjelzők és swingerek"]];
+ return '<div class="grid cats">'+A.map(([k,n,m])=>`<a class="card" href="#${k}"><div class="ci">${ic(k)}</div><b>${n}</b><div class="m">${m}</div></a>`).join("")+Object.entries(TREE).map(([k,v])=>`<a class="card" href="#${k}"><div class="ci">${ic(v.ic)}</div><b>${v.n}</b><div class="m">${v.m}</div></a>`).join("")+'</div>'}
 $("q").oninput=render;addEventListener("hashchange",()=>{$("q").value="";render();scrollTo(0,0)});render();
